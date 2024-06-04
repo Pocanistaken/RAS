@@ -9,6 +9,7 @@ import com.ras.form.MenuForm;
 import com.ras.form.ProductForm;
 import com.ras.form.RegionForm;
 import com.ras.form.TableForm;
+import com.ras.form.TableManagerForm;
 import raven.drawer.component.SimpleDrawerBuilder;
 import raven.drawer.component.footer.SimpleFooterData;
 import raven.drawer.component.header.SimpleHeaderData;
@@ -86,6 +87,12 @@ public class MyDrawerBuilder extends SimpleDrawerBuilder {
                         if (index == 1) {
                             
                             if (subIndex == 1) {
+                                
+                                WindowsTabbed.getInstance().addTab("Table Manager", new TableManagerForm());
+                                          
+                            }
+                            
+                            if (subIndex == 2) {
                                 
                                 WindowsTabbed.getInstance().addTab("Table Edit", new TableForm());
                                           

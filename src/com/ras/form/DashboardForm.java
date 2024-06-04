@@ -21,26 +21,15 @@ public class DashboardForm extends TabbedForm {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelGlowingGradient1 = new javaswingdev.pggb.PanelGlowingGradient();
-
-        panelGlowingGradient1.setGradientColor1(new java.awt.Color(0, 204, 153));
-        panelGlowingGradient1.setGradientColor2(new java.awt.Color(102, 102, 255));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(162, 162, 162)
-                .addComponent(panelGlowingGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(777, Short.MAX_VALUE))
+            .addGap(0, 1300, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(80, 80, 80)
-                .addComponent(panelGlowingGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(406, Short.MAX_VALUE))
+            .addGap(0, 850, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -56,6 +45,5 @@ public class DashboardForm extends TabbedForm {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javaswingdev.pggb.PanelGlowingGradient panelGlowingGradient1;
     // End of variables declaration//GEN-END:variables
 }
