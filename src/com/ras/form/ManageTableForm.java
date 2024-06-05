@@ -17,12 +17,15 @@ import com.ras.enums.TableStatus;
 import com.ras.exception.SelectedValueEmpty;
 import com.ras.form.popup.AddProduct;
 import com.ras.form.popup.CreateMenu;
+import com.ras.form.popup.CreateRegion;
 import com.ras.form.popup.CreateTable;
+import com.ras.form.popup.ManageEditTable;
 import com.ras.form.popup.ManageTable;
 import com.ras.swing.table.CheckBoxTableHeaderRenderer;
 import com.ras.swing.table.TableHeaderAlignment;
 import javax.swing.JOptionPane;
 import com.ras.tabbed.TabbedForm;
+import com.ras.tabbed.WindowsTabbed;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -127,7 +130,7 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
             int amount = (int) getSelectedValue(model, i, 6);
             total += price * amount;
         }
-        lbTotal.setText(String.valueOf(total));
+        lbTotal.setText(String.valueOf(total) + " $");
     }
 
 
@@ -151,7 +154,7 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
         borderUp = new javax.swing.JLabel();
         lbTotal = new javax.swing.JLabel();
         lbTotalSign = new javax.swing.JLabel();
-        cmdAdd1 = new com.ras.swing.button.ButtonAction();
+        cmdEdit = new com.ras.swing.button.ButtonAction();
         menuSubTitle = new javax.swing.JLabel();
 
         jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 36)); // NOI18N
@@ -212,10 +215,10 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
         lbTotalSign.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
         lbTotalSign.setText("Total =");
 
-        cmdAdd1.setText("Edit");
-        cmdAdd1.addActionListener(new java.awt.event.ActionListener() {
+        cmdEdit.setText("Edit");
+        cmdEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdAdd1ActionPerformed(evt);
+                cmdEditActionPerformed(evt);
             }
         });
 
@@ -236,7 +239,7 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
                                 .addGap(385, 385, 385)
                                 .addComponent(cmdAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(cmdAdd1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cmdEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE))
@@ -269,7 +272,7 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
                         .addContainerGap()
                         .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cmdAdd1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmdEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cmdAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -326,7 +329,7 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
         
         // Add anti bug checkers - Pocan
         
-            ManageTable manageTable = new ManageTable();
+            ManageTable manageTable = new ManageTable(tableEntity);
             DefaultOption option = new DefaultOption() {
                 @Override
                 public boolean closeWhenClickOutside() {
@@ -390,11 +393,109 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
             cmdDeleteAction(model, this.getClass());
     }//GEN-LAST:event_cmdDeleteActionPerformed
 
-    private void cmdAdd1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdAdd1ActionPerformed
+    private void cmdEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdEditActionPerformed
+        cmdEditAction();
+        
+        
         
 
-    }//GEN-LAST:event_cmdAdd1ActionPerformed
+    }//GEN-LAST:event_cmdEditActionPerformed
 
+    
+    private void cmdEditAction() {
+        
+        SwingWorker<Void, Void> worker;
+        worker = new SwingWorker<Void, Void>() {
+
+            @Override
+            protected Void doInBackground() throws Exception {
+                
+                
+                ArrayList<Boolean> selectedList = getSelectedBooleanValues(model);
+                if (getSelectedValueAmount(model) == 1) {
+                    if (isSelectedValueContainsTrue(selectedList)) {
+                        int i = 0;
+                        for(Boolean b : selectedList) {
+                            i++;
+                            if (b) {
+                                DatabaseOperation databaseOperation = new DatabaseOperation();
+
+                                String productName = (String) getSelectedValue(model, i-1, 2);
+                                String productDescription = (String) getSelectedValue(model, i-1, 3);
+                                Category productCategory = (Category) getSelectedValue(model, i-1, 4);
+
+                                double price = (double) getSelectedValue(model, i-1, 5);
+                                int amount = (int) getSelectedValue(model, i-1, 6);
+                                int productID = databaseOperation.getProductIDFromAllFeatures(productName, productDescription, price, productCategory.categoryID());
+                                
+                                
+                                Product product = new Product(productName, productDescription, price, productCategory, productID);
+                                
+                                ManageEditTable managaEditTable = new ManageEditTable(tableEntity, product, amount);
+                                        DefaultOption option = new DefaultOption() {
+                                            @Override
+                                            public boolean closeWhenClickOutside() {
+                                                return true;
+                                            }
+                                        };
+                                        String actions[] = new String[]{"Cancel", "Save"};
+                                        GlassPanePopup.showPopup(new SimplePopupBorder(managaEditTable, "Edit Added Product", actions, (pc, c) -> {            
+                                            if (c == 1) {
+                                                
+                                                int selectedAmount = (int) Integer.valueOf(managaEditTable.getTxtAmount().getText());
+                                                databaseOperation.updateProductAmountInTable(selectedAmount, tableEntity.getTableID(), productID);
+                                                Notifications.getInstance().show(Notifications.Type.SUCCESS, "Table product item succesfully edited.");
+                                                insertData("update");
+
+
+                                                pc.closePopup();
+                                            
+                                            }else {
+                                                pc.closePopup();
+                                                
+                                                }
+                                        }), option);
+
+                                
+                            }   
+                        }
+                    }
+                }
+                else { 
+                    insertData("update");
+
+                    Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.BOTTOM_LEFT, "You must select only 1 value.");
+
+                }
+
+                resetData(model);
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                 //   insertData("update");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.BOTTOM_LEFT, "404 - Error");
+                }
+            }
+        };
+
+
+        worker.execute();
+        
+        
+        
+        
+        
+        
+        
+        
+    }
+    
     @Override
     public boolean formClose() {
         int opt = JOptionPane.showConfirmDialog(this, "Data not save do you want to close ?", "Close", JOptionPane.YES_NO_OPTION);
@@ -410,8 +511,8 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel borderUp;
     private com.ras.swing.button.ButtonAction cmdAdd;
-    private com.ras.swing.button.ButtonAction cmdAdd1;
     private com.ras.swing.button.ButtonAction cmdDelete;
+    private com.ras.swing.button.ButtonAction cmdEdit;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel lbTitle;
     private javax.swing.JLabel lbTotal;
@@ -448,6 +549,7 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
                     for(Product p : productList) {
                         
                         int productAmount = databaseOperation.getProductAmountFromTable(p, tableEntity);
+                        System.out.println(productAmount);
                         double price = productAmount * p.getProductPrice();                        
                         Object[] add = {false, ++i, p.getProductName(), p.getProductDescription(), p.getProductCategory(), p.getProductPrice(), productAmount, price};
                         model.addRow(add);
@@ -491,7 +593,18 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
                         i++;
                         if (b) {
                             
-                            Product product = new Product((int) getSelectedValue(model, i-1, 1)); // Detected a bug.
+                            String productName = (String) getSelectedValue(model, i-1, 2);
+                            String productDescription = (String) getSelectedValue(model, i-1, 3);
+                            Category productCategory = (Category) getSelectedValue(model, i-1, 4);
+
+                            double price = (double) getSelectedValue(model, i-1, 5);
+                            int amount = (int) getSelectedValue(model, i-1, 6);
+                            int productID = databaseOperation.getProductIDFromAllFeatures(productName, productDescription, price, productCategory.categoryID());
+
+                                
+                            Product product = new Product(productName, productDescription, price, productCategory, productID);
+                                                       
+                            
                             databaseOperation.deleteProductFromTable(product, tableEntity);
                             counter++;
                         }   

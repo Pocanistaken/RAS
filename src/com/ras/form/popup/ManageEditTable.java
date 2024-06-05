@@ -14,12 +14,14 @@ import javax.swing.ListCellRenderer;
 import javax.swing.SwingWorker;
 import raven.toast.Notifications;
 
-public class ManageTable extends javax.swing.JPanel {
+public class ManageEditTable extends javax.swing.JPanel {
 
     private Table tableEntity;
+    private Product product;
     
-    public ManageTable(Table tableEntity) {
+    public ManageEditTable(Table tableEntity, Product product, int amount) {
         this.tableEntity = tableEntity;
+        this.product = product;
         initComponents();
         comboBoxModelCategory = (DefaultComboBoxModel) comboCategory.getModel();
         setCategoryComboBox();
@@ -27,6 +29,13 @@ public class ManageTable extends javax.swing.JPanel {
         initializeProductComboBoxRenderer();
 
         comboBoxModelProduct = (DefaultComboBoxModel) comboProduct.getModel();
+        
+        
+        comboCategory.setEditable(false);
+        comboProduct.setEditable(false);
+        txtAmount.setText(String.valueOf(amount));
+        
+
     }
 
     /**
@@ -174,29 +183,24 @@ public class ManageTable extends javax.swing.JPanel {
     private void setCategoryComboBox() {
         
         try {
-            SwingWorker<ArrayList<Category>, Void> worker;
-            worker = new SwingWorker<ArrayList<Category>, Void>() {
+            SwingWorker<ArrayList<Void>, Void> worker;
+            worker = new SwingWorker<ArrayList<Void>, Void>() {
 
                 @Override
-                protected ArrayList<Category> doInBackground() throws Exception {
+                protected ArrayList<Void> doInBackground() throws Exception {
                     comboBoxModelCategory.removeAllElements();
-
-                    DatabaseOperation databaseOperation = new DatabaseOperation();
-                    ArrayList<Category> categoryList = databaseOperation.getAllCategorys();
-                    for (Category c : categoryList) {
-                        System.out.println(c.categoryName());
-                        comboBoxModelCategory.addElement(c);
-                    }
+                    
+                    comboBoxModelCategory.addElement(product.getProductCategory());
 
                     getComboCategory().setModel(comboBoxModelCategory);
 
-                    return categoryList;
+                    return null;
                 }
 
                 @Override
                 protected void done() {
                     try {
-                        ArrayList<Category> result = get();
+                     //   ArrayList<Category> result = get();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.BOTTOM_LEFT, "404 - Error");
@@ -215,37 +219,21 @@ public class ManageTable extends javax.swing.JPanel {
     private void setProductComboBox() {
         
         try {
-            SwingWorker<ArrayList<Product>, Void> worker;
-            worker = new SwingWorker<ArrayList<Product>, Void>() {
+            SwingWorker<ArrayList<Void>, Void> worker;
+            worker = new SwingWorker<ArrayList<Void>, Void>() {
 
                 @Override
-                protected ArrayList<Product> doInBackground() throws Exception {
+                protected ArrayList<Void> doInBackground() throws Exception {
                     
                     Category selectedCategory = (Category) getComboCategory().getSelectedItem();
                     
                     comboBoxModelProduct.removeAllElements();
+                    
+                    comboBoxModelProduct.addElement(product);
 
-                    DatabaseOperation databaseOperation = new DatabaseOperation();
-                    
-                    ArrayList<Product> productList = databaseOperation.getAllProductsWithSpecificCategory(selectedCategory);
-                    
-                    ArrayList<Product> tableProductList = databaseOperation.getProductListFromTable(tableEntity);
-                    
-                    productList.removeAll(tableProductList);
-                    
-                    
-                    for (Product p : productList) {
-                        comboBoxModelProduct.addElement(p);
-                    }
-                    
-                    
-                    
-                    
-                    
+                    getComboProduct().setModel(comboBoxModelProduct); 
 
-                    getComboProduct().setModel(comboBoxModelProduct); // IM SO STUPIDDDDDDDDDD WASTED +30 MIN FOR JUST THIS LINE  
-
-                    return productList;
+                    return null;
                 }
 
                 @Override

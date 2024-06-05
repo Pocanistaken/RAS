@@ -625,6 +625,29 @@ public class DatabaseOperation {
             return null;
         }
     }
+    
+    public int getProductIDFromAllFeatures(String productName, String productDescription, double productPrice, int category_id) {
+        String request = "SELECT product_id FROM `product` WHERE `productName` = ? AND `productDescription` = ? AND `productPrice` = ? AND `category_id` = ?";
+        int product_id = 0;
+
+        try (PreparedStatement statement = con.prepareStatement(request)) {
+            statement.setString(1, productName);
+            statement.setString(2, productDescription);
+            statement.setDouble(3, productPrice);
+            statement.setInt(4, category_id);
+
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                product_id = rs.getInt("product_id");
+            }
+
+            return product_id;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
    
     
     
@@ -793,18 +816,24 @@ public class DatabaseOperation {
             return 0;
         }
     }
+    
+    
+    
+    public void updateProductAmountInTable(int amount, int tableID, int productID) {
+        final var request = "UPDATE table_product SET amount = ? WHERE table_id = ? AND product_id = ?";
+        try (final var statement = con.prepareStatement(request)) {
+            statement.setInt(1, amount);
+            statement.setInt(2, tableID);
+            statement.setInt(3, productID);
+            statement.executeUpdate();  
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } 
+    }
+
+    
+    
+    
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    

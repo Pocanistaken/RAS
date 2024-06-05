@@ -1,11 +1,13 @@
 package com.ras.form;
 
 
+import static com.formdev.flatlaf.extras.components.FlatButton.ButtonType.tab;
 import com.ras.database.DatabaseOperation;
 import com.ras.entity.Region;
 import com.ras.entity.Table;
 import com.ras.enums.TableStatus;
 import com.ras.tabbed.TabbedForm;
+import com.ras.tabbed.TabbedItem;
 import com.ras.tabbed.WindowsTabbed;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -22,9 +24,6 @@ import raven.toast.Notifications;
 
 public class RegionManagerForm extends TabbedForm {
     
-
-
-
     public RegionManagerForm() {
         initComponents();
         addRegionButtons();
@@ -64,6 +63,8 @@ public class RegionManagerForm extends TabbedForm {
                             
                             ArrayList<Table> tableList = databaseOperation.getAllTablesWithSpecificRegion(region);
 
+                            
+                            
                             WindowsTabbed.getInstance().addTab("Tables - (" + regionName + ")", new TableManagerForm(tableList));
 
                             
@@ -176,16 +177,8 @@ public class RegionManagerForm extends TabbedForm {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    @Override
-    public boolean formClose() {
-        int opt = JOptionPane.showConfirmDialog(this, "Data not save do you want to close ?", "Close", JOptionPane.YES_NO_OPTION);
-        return opt == JOptionPane.YES_OPTION;
-    }
 
-    @Override
-    public void formOpen() {
-        System.out.println("Form open");
-    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel2;

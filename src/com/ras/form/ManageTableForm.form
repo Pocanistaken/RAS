@@ -89,7 +89,7 @@
                                   <EmptySpace min="-2" pref="385" max="-2" attributes="0"/>
                                   <Component id="cmdAdd" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="cmdAdd1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="cmdEdit" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="cmdDelete" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace pref="100" max="32767" attributes="0"/>
@@ -134,7 +134,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="cmdDelete" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="cmdAdd1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="cmdEdit" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="cmdAdd" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -280,12 +280,12 @@
             <Property name="text" type="java.lang.String" value="Total ="/>
           </Properties>
         </Component>
-        <Component class="com.ras.swing.button.ButtonAction" name="cmdAdd1">
+        <Component class="com.ras.swing.button.ButtonAction" name="cmdEdit">
           <Properties>
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdAdd1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdEditActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

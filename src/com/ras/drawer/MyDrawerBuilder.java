@@ -78,7 +78,6 @@ public class MyDrawerBuilder extends SimpleDrawerBuilder {
                         if (index == 1) {
                             
                             if (subIndex == 1) {
-                                
                                 WindowsTabbed.getInstance().addTab("Table Manager", new RegionManagerForm());
                                           
                             }

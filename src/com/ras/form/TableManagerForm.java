@@ -38,7 +38,6 @@ public class TableManagerForm extends TabbedForm {
 
             @Override
             protected Void doInBackground() throws Exception {
-                DatabaseOperation databaseOperation = new DatabaseOperation();
 
                 JPanel panel = tablePanel;
                 int[] siraSutun = calculateTableLayout(tableList.size());
@@ -66,6 +65,8 @@ public class TableManagerForm extends TabbedForm {
                     masaButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
+                            DatabaseOperation databaseOperation = new DatabaseOperation(); // Fixed delay problem.
+
                             JButton clickedButton = (JButton) e.getSource();
                             String tableName = clickedButton.getText();
                             int tableID = Integer.valueOf(clickedButton.getActionCommand()); 
@@ -91,6 +92,8 @@ public class TableManagerForm extends TabbedForm {
             @Override
             protected void done() {
                 try {
+                    
+                    System.out.println("debug");
 
                 } catch (Exception e) {
                     e.printStackTrace();
