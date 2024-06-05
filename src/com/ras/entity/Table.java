@@ -17,7 +17,7 @@ public class Table {
         this.tableChairAmount = tableChairAmount;
         this.tableRegion = tableRegion;
         this.tableID = tableID;
-        if (tableStatus.equals(TableStatus.RESERVATION)) {
+        if (tableStatus.equals(TableStatus.RESERVATION.toString())) {
             this.tableOwnerPhoneNumber = tableOwnerPhoneNumber;
         }
     }

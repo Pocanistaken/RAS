@@ -8,6 +8,7 @@ import com.ras.form.DashboardForm;
 import com.ras.form.MenuForm;
 import com.ras.form.ProductForm;
 import com.ras.form.RegionForm;
+import com.ras.form.RegionManagerForm;
 import com.ras.form.TableForm;
 import com.ras.form.TableManagerForm;
 import raven.drawer.component.SimpleDrawerBuilder;
@@ -17,22 +18,12 @@ import raven.drawer.component.menu.MenuAction;
 import raven.drawer.component.menu.MenuEvent;
 import raven.drawer.component.menu.MenuValidation;
 import raven.drawer.component.menu.SimpleMenuOption;
-import com.ras.form.TestForm;
-import com.ras.main.Login;
-import com.ras.main.Main;
 import com.ras.manager.FileManager;
 import raven.swing.AvatarIcon;
 import com.ras.tabbed.WindowsTabbed;
 
-/**
- *
- * @author Pocan
- */
 public class MyDrawerBuilder extends SimpleDrawerBuilder {
     
-    
-    
-  
     @Override
     public SimpleHeaderData getSimpleHeaderData() {
         return new SimpleHeaderData()
@@ -88,7 +79,7 @@ public class MyDrawerBuilder extends SimpleDrawerBuilder {
                             
                             if (subIndex == 1) {
                                 
-                                WindowsTabbed.getInstance().addTab("Table Manager", new TableManagerForm());
+                                WindowsTabbed.getInstance().addTab("Table Manager", new RegionManagerForm());
                                           
                             }
                             

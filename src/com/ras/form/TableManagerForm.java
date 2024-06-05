@@ -1,51 +1,105 @@
 package com.ras.form;
 
 
+import com.ras.database.DatabaseOperation;
+import com.ras.entity.Region;
+import com.ras.entity.Table;
+import com.ras.enums.TableStatus;
 import com.ras.tabbed.TabbedForm;
+import com.ras.tabbed.WindowsTabbed;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
+import raven.toast.Notifications;
 
 
 
 public class TableManagerForm extends TabbedForm {
     
+    private ArrayList<Table> tableList;
 
-    private static final int TABLE_AMOUNT = 100;
 
-
-    public TableManagerForm() {
+    public TableManagerForm(ArrayList<Table> tableList) {
+        this.tableList = tableList;
         initComponents();
         addTableButtons();
     }
     
     private void addTableButtons() {
         
-        JPanel panel = tablePanel;
-        int[] siraSutun = calculateTableLayout(TABLE_AMOUNT);
-        int sira = siraSutun[0];
-        int sutun = siraSutun[1];
-        sutun += 2;
-        
-        System.out.println(sira + " - " + sutun);
-        panel.setLayout(new GridLayout(sutun, sira, 15, 15));
+        SwingWorker<Void, Void> worker;
+        worker = new SwingWorker<Void, Void>() {
 
-        // Masalar için butonlar oluşturuluyor
-        for (int i = 1; i <= TABLE_AMOUNT; i++) {
-            JButton masaButton = new JButton("Masa " + i);
-            masaButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    JButton clickedButton = (JButton) e.getSource();
-                    String masaAdi = clickedButton.getText();
-                   // JOptionPane.showMessageDialog(frame, masaAdi + " seçildi.");
+            @Override
+            protected Void doInBackground() throws Exception {
+                DatabaseOperation databaseOperation = new DatabaseOperation();
+
+                JPanel panel = tablePanel;
+                int[] siraSutun = calculateTableLayout(tableList.size());
+                int sira = siraSutun[0];
+                int sutun = siraSutun[1];
+                sutun += 2;
+                
+                
+                for(Table t : tableList) {
+                    JButton masaButton = new JButton(String.valueOf(t.getTableID()));
+                    masaButton.setText(t.getTableName());
+
+                    masaButton.setActionCommand(String.valueOf(t.getTableID()));
+
+                    if (t.getTableStatus().equals(TableStatus.EMPTY.toString())) {
+                        masaButton.setForeground(new Color(255,170, 29));
+                    }
+                    if (t.getTableStatus().equals(TableStatus.RESERVATION.toString())) {
+                        masaButton.setForeground(new Color(192 ,192,192));
+                    }
+                    if (t.getTableStatus().equals(TableStatus.FULL.toString())) {
+                        masaButton.setForeground(new Color(255,36,0));
+                    }
+
+                    masaButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            JButton clickedButton = (JButton) e.getSource();
+                            String tableName = clickedButton.getText();
+                            int tableID = Integer.valueOf(clickedButton.getActionCommand()); 
+                            Table table = databaseOperation.getTableFromID(tableID);
+                            
+                            
+                            WindowsTabbed.getInstance().addTab("Table - " + tableName, new ManageTableForm(table));
+
+                            
+
+                        }
+                    });
+                    panel.add(masaButton);
                 }
-            });
-            panel.add(masaButton);
-        }
+
+                panel.setLayout(new GridLayout(sutun, sira, 15, 15));
+
+
+
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.BOTTOM_LEFT, "404 - Error");
+                }
+            }
+        };
+        
+        worker.execute();
     }
     
     
@@ -77,7 +131,6 @@ public class TableManagerForm extends TabbedForm {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        scrollPane = new javax.swing.JScrollPane(tablePanel);
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         tablePanel = new javax.swing.JPanel();
@@ -144,7 +197,6 @@ public class TableManagerForm extends TabbedForm {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JScrollPane scrollPane;
     private javax.swing.JPanel tablePanel;
     // End of variables declaration//GEN-END:variables
 }

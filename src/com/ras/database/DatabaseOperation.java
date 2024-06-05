@@ -3,6 +3,7 @@ package com.ras.database;
 import com.ras.entity.Category;
 import com.ras.entity.Menu;
 import com.ras.entity.Product;
+import com.ras.entity.ProductTable;
 import com.ras.entity.Region;
 import com.ras.entity.Table;
 import com.ras.exception.RegionAlreadyExists;
@@ -47,14 +48,6 @@ public class DatabaseOperation {
             Logger.getLogger(DatabaseOperation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
-
-
-        
-        
-    
-    
     
     public boolean loginPanel(String username, String password) {
         final var request = "Select * from user where username = ? and password = ?";
@@ -348,8 +341,6 @@ public class DatabaseOperation {
     
     public ArrayList<Table> getAllTables() {
         
-        
-        
         String request = "SELECT * FROM `table`";
         ArrayList<Table> list = new ArrayList<>();
         
@@ -371,6 +362,66 @@ public class DatabaseOperation {
                 list.add(new Table(tableName, tableChairAmount, tableOwnerPhoneNumber, tableStatus, new Region(convertIdToName("region", tableRegionID), tableRegionID), id));
             }
             return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    
+    
+    public ArrayList<Table> getAllTablesWithSpecificRegion(Region region) {
+        
+        String request = "SELECT * FROM `table` where region_id = '" + region.regionID() + "'";
+        ArrayList<Table> list = new ArrayList<>();
+        
+        try {
+            final var statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(request);
+  
+      
+            while (rs.next()) {
+                
+                int id = rs.getInt("table_id");
+                String tableName = rs.getString("tableName");
+                int tableChairAmount = rs.getInt("tableChairAmount");
+                String tableOwnerPhoneNumber = rs.getString("tableOwnerPhoneNumber");
+                String tableStatus = rs.getString("tableStatus");
+                int tableRegionID = rs.getInt("region_id");
+
+
+                list.add(new Table(tableName, tableChairAmount, tableOwnerPhoneNumber, tableStatus, new Region(convertIdToName("region", tableRegionID), tableRegionID), id));
+            }
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public Table getTableFromID(int tableID) {
+        
+        String request = "SELECT * FROM `table` WHERE `table_id` = " + tableID;
+        Table value_table = null;
+        
+        try {
+            final var statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(request);
+  
+      
+            while (rs.next()) {
+                
+                String tableName = rs.getString("tableName");
+                int tableChairAmount = rs.getInt("tableChairAmount");
+                String tableOwnerPhoneNumber = rs.getString("tableOwnerPhoneNumber");
+                String tableStatus = rs.getString("tableStatus");
+                int region_id = rs.getInt("region_id");
+                
+                value_table = new Table(tableName, tableChairAmount, tableOwnerPhoneNumber, tableStatus, new Region(convertIdToName("region", region_id), region_id), tableID);
+                
+            }
+            
+            return value_table;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -488,9 +539,39 @@ public class DatabaseOperation {
         }
     }
     
-    public Product getProductFromID(Product product) {
+    
+    public ArrayList<Product> getAllProductsWithSpecificCategory(Category category) {
         
-        String request = "SELECT * FROM `product` WHERE `product_id` = " + product.getProductID();
+        String request = "SELECT * FROM `product` where category_id = '" + category.categoryID() + "'";
+        ArrayList<Product> list = new ArrayList<>();
+        
+        try {
+            final var statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(request);
+  
+      
+            while (rs.next()) {
+                
+                int id = rs.getInt("product_id");
+                String productName = rs.getString("productName");
+                String productDescription = rs.getString("productDescription");
+                double productPrice = rs.getDouble("productPrice");
+                int category_id = rs.getInt("category_id");
+                
+               list.add(new Product(productName, productDescription, productPrice, new Category(convertIdToName("category", category_id), category_id), id));
+
+
+            }
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public Product getProductFromID(int productID) {
+        
+        String request = "SELECT * FROM `product` WHERE `product_id` = " + productID;
         ArrayList<Product> list = new ArrayList<>();
         Product value_product = null;
         
@@ -506,11 +587,39 @@ public class DatabaseOperation {
                 double productPrice = rs.getDouble("productPrice");
                 int category_id = rs.getInt("category_id");
                 
-                value_product = new Product(productName, productDescription, productPrice, new Category(convertIdToName("category", category_id), category_id), product.getProductID());
+                value_product = new Product(productName, productDescription, productPrice, new Category(convertIdToName("category", category_id), category_id), productID);
 
             }
             
             return value_product;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public ArrayList<Product> getProductListFromTable(Table table) {
+        
+        String request = "SELECT * FROM `table_product` WHERE `table_id` = " + table.getTableID();
+        ArrayList<Product> list = new ArrayList<>();
+        
+        try {
+            final var statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(request);
+  
+      
+            while (rs.next()) {
+                
+                int productID = rs.getInt("product_id");
+                
+                Product product = getProductFromID(productID);
+                
+                
+                list.add(product); 
+
+            }
+            
+            return list;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -588,7 +697,7 @@ public class DatabaseOperation {
             while (rs.next()) {
                 
                 int productID = rs.getInt("product_id");
-                list.add(getProductFromID(new Product(productID))); 
+                list.add(getProductFromID(productID)); 
 
             }
             
@@ -629,8 +738,61 @@ public class DatabaseOperation {
         }   
     }
     
+    
+    // TABLE - PRODUCT
+    
+    
+    
+    public void addProductToTable(Product product, Table table, int amount) {
+        final var request = "INSERT Into `table_product` (table_product_id,table_id,product_id,amount) VALUES (?,?,?,?)";
+        try (final var statement = con.prepareStatement(request)) {
+            statement.setInt(1, increaseID("table_product"));
+            statement.setInt(2, table.getTableID());
+            statement.setInt(3, product.getProductID());
+            statement.setInt(4, amount);
 
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    
+    public void deleteProductFromTable(Product product, Table table) {
+        String request = "DELETE FROM `table_product` WHERE product_id = ? AND table_id = ?";
+        try {
+            preparedStatement = con.prepareStatement(request);
+            preparedStatement.setInt(1, product.getProductID());
+            preparedStatement.setInt(2, table.getTableID());
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }   
+    }
+    
+    
+    public int getProductAmountFromTable(Product product, Table table) {
+        String request = "SELECT amount FROM `table_product` WHERE `product_id` = ? AND `table_id` = ?";
+        int amount = 0;
 
+        try (PreparedStatement statement = con.prepareStatement(request)) {
+            statement.setInt(1, product.getProductID());
+            statement.setInt(2, table.getTableID());
+
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                amount = rs.getInt("amount");
+            }
+
+            return amount;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }
 
 
