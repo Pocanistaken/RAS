@@ -7,6 +7,7 @@ import com.ras.entity.Product;
 import com.ras.entity.ProductTable;
 import com.ras.entity.Region;
 import com.ras.entity.Table;
+import com.ras.entity.model.DailyEarnModelData;
 import com.ras.enums.PaymentType;
 import com.ras.exception.RegionAlreadyExists;
 import com.ras.exception.TableAlreadyExists;
@@ -20,6 +21,8 @@ import java.io.InputStream;
 
 import java.sql.*;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -910,6 +913,84 @@ public class DatabaseOperation {
             e.printStackTrace();
         } 
     }
+    
+    
+    
+    
+    public ArrayList<DailyEarnModelData> getDashboardData() {
+        String request = "SELECT DATE_FORMAT(STR_TO_DATE(billDate, '%Y-%m-%d %H:%i:%s'), '%Y-%m-%d') AS billDay, SUM(billTotal) AS dailyTotal FROM bill GROUP BY billDay ORDER BY billDay; ";
+
+        ArrayList<DailyEarnModelData> list = new ArrayList<>();
+        try (PreparedStatement statement = con.prepareStatement(request)) {
+
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                
+                double dailyTotal = rs.getDouble("dailyTotal");
+                String billDay = rs.getString("billDay");
+                
+                list.add(new DailyEarnModelData(dailyTotal, billDay));
+
+            }
+            
+            return list;
+                  
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            return null;
+        }
+    }
+    
+    
+    public int getTodayInvoiceCount() {
+        LocalDate today = LocalDate.now();
+        String formattedDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        String request = "SELECT COUNT(*) AS totalBillAmount FROM bill WHERE billDate LIKE ?;";
+        
+        int totalBillAmount = 0;
+
+        try (PreparedStatement statement = con.prepareStatement(request)) {
+
+            statement.setString(1, formattedDate + "%");
+
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                totalBillAmount = rs.getInt("totalBillAmount");
+            }
+           
+            return totalBillAmount;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    
+    
+    public int getTotalInstantTableCount() {
+        
+        String request = "SELECT COUNT(DISTINCT table_id) AS totalTableCount FROM table_product;";
+        int totalTableCount = 0;
+        try (PreparedStatement statement = con.prepareStatement(request)) {
+
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                totalTableCount = rs.getInt("totalTableCount");
+            }
+            return totalTableCount;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+    
 
     
     

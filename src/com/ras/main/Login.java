@@ -13,8 +13,10 @@ import com.formdev.flatlaf.ui.FlatPasswordFieldUI;
 import com.ras.database.DatabaseOperation;
 import com.ras.entity.Region;
 import com.ras.entity.account.Employee;
+import com.ras.form.DashboardForm;
 import static com.ras.main.Main.main;
 import com.ras.manager.FileManager;
+import com.ras.tabbed.WindowsTabbed;
 import java.awt.Font;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -23,10 +25,13 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import raven.alerts.MessageAlerts;
 import raven.toast.Notifications;
 
@@ -349,6 +354,8 @@ public class Login extends javax.swing.JFrame {
                             Main main = new Main();
                             main.setVisible(true);
                             loginFrame.setVisible(false);
+                            WindowsTabbed.getInstance().addTab("Dashboard", new DashboardForm());
+
                         });
                     } else {
                         Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.BOTTOM_LEFT, "Login is unsuccesfully.");
@@ -367,11 +374,7 @@ public class Login extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+
         try {
             UIManager.setLookAndFeel( new FlatLightLaf() );
         } catch( Exception ex ) {
@@ -390,9 +393,7 @@ public class Login extends javax.swing.JFrame {
         
         FileManager.getInstance().createApplicationFolderPath();
 
-        
-
-        
+                
 
         
         
