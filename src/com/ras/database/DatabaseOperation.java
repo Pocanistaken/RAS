@@ -1,11 +1,13 @@
 package com.ras.database;
 
+import com.ras.entity.Bill;
 import com.ras.entity.Category;
 import com.ras.entity.Menu;
 import com.ras.entity.Product;
 import com.ras.entity.ProductTable;
 import com.ras.entity.Region;
 import com.ras.entity.Table;
+import com.ras.enums.PaymentType;
 import com.ras.exception.RegionAlreadyExists;
 import com.ras.exception.TableAlreadyExists;
 import com.ras.manager.FileManager;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -730,6 +733,83 @@ public class DatabaseOperation {
             return null;
         }
     }
+    
+    // BILL
+    
+    
+    public void addBillToDatabase(Bill bill) {
+        final var request = "INSERT Into `bill` (bill_id,billTableID,billTotal,billPaymentType,billDate) VALUES (?,?,?,?,?)";
+        try (final var statement = con.prepareStatement(request)) {
+            statement.setInt(1, bill.billID());
+            statement.setInt(2, bill.billTableID());
+            statement.setDouble(3, bill.billTotal());
+            statement.setString(4, bill.billPaymentType().name());
+            statement.setTimestamp(5, Timestamp.from(bill.billDate()));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    public void deleteBillFromDatabase(Bill bill) {
+        String request = "DELETE FROM `bill` WHERE bill_id = ?";
+        try {
+            preparedStatement = con.prepareStatement(request);
+            preparedStatement.setInt(1,bill.billID());
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }   
+    }
+    
+    public ArrayList<Bill> getAllBills() {
+        
+        String request = "SELECT * FROM `bill`";
+        ArrayList<Bill> list = new ArrayList<>();
+        
+        try {
+            final var statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(request);
+  
+      
+            while (rs.next()) {
+                
+                int id = rs.getInt("bill_id");
+                int billTableID = rs.getInt("billTableID");
+                double billTotal = rs.getDouble("billTotal");
+                String billPaymentType = rs.getString("billPaymentType");
+                Timestamp billDate = rs.getTimestamp("billDate");
+
+                list.add(new Bill(id, billTableID, billTotal, PaymentType.valueOf(billPaymentType), billDate.toInstant()));
+                
+
+            }
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    
+    
+    // BILL - PRODUCT
+    
+    public void addProductToBill(Product product, Bill bill, int amount) {
+        final var request = "INSERT Into `bill_product` (bill_id,product_id,amount) VALUES (?,?,?)";
+        try (final var statement = con.prepareStatement(request)) {
+            statement.setInt(1, bill.billID());
+            statement.setInt(2, product.getProductID());
+            statement.setInt(3, amount);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // There is no need to delete product from bill.
     
     
     // MENU - PRODUCT

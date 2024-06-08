@@ -3,6 +3,7 @@ package com.ras.drawer;
 import com.github.weisj.jsvg.nodes.Title;
 import com.ras.entity.account.Employee;
 import com.ras.form.AccountForm;
+import com.ras.form.BillForm;
 import com.ras.form.CategoryForm;
 import com.ras.form.DashboardForm;
 import com.ras.form.MenuForm;
@@ -44,7 +45,7 @@ public class MyDrawerBuilder extends SimpleDrawerBuilder {
             {"Region", "View", "Edit"},
             {"Category", "View", "Edit"},
             {"Product", "View", "Edit"},
-            {"Inventory", "View", "Suggestions"},
+            {"Bill", "View", "Edit"},
             {"~REPORTS~"},
             {"Statistic", "View", "Suggestions"},
             {"~OTHER~"},
@@ -128,6 +129,20 @@ public class MyDrawerBuilder extends SimpleDrawerBuilder {
                             if (subIndex == 1) {
                                 
                                 WindowsTabbed.getInstance().addTab("Product Edit", new ProductForm());
+
+                                
+                            }
+                            
+                        }
+                        
+                        
+                        
+                        if (index == 6) {
+                            
+                            
+                            if (subIndex == 1) {
+                                
+                                 WindowsTabbed.getInstance().addTab("Product Edit", new BillForm());
 
                                 
                             }

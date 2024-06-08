@@ -65,6 +65,7 @@ public class TableManagerForm extends TabbedForm {
                     masaButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
+                            
                             DatabaseOperation databaseOperation = new DatabaseOperation(); // Fixed delay problem.
 
                             JButton clickedButton = (JButton) e.getSource();

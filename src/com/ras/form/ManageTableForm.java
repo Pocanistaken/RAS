@@ -7,12 +7,14 @@ import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import com.ras.database.DatabaseOperation;
 import com.ras.drawer.MyDrawerBuilder;
+import com.ras.entity.Bill;
 import com.ras.entity.Category;
 import com.ras.entity.Menu;
 import com.ras.entity.Product;
 import com.ras.entity.Region;
 import com.ras.entity.Table;
 import com.ras.entity.account.Employee;
+import com.ras.enums.PaymentType;
 import com.ras.enums.TableStatus;
 import com.ras.exception.SelectedValueEmpty;
 import com.ras.form.popup.AddProduct;
@@ -21,6 +23,8 @@ import com.ras.form.popup.CreateRegion;
 import com.ras.form.popup.CreateTable;
 import com.ras.form.popup.ManageEditTable;
 import com.ras.form.popup.ManageTable;
+import com.ras.swing.button.toggle.ToggleAdapter;
+import com.ras.swing.button.toggle.ToggleButton;
 import com.ras.swing.table.CheckBoxTableHeaderRenderer;
 import com.ras.swing.table.TableHeaderAlignment;
 import javax.swing.JOptionPane;
@@ -29,6 +33,7 @@ import com.ras.tabbed.WindowsTabbed;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,10 +68,40 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
 
         menuSubTitle.setText("View " + tableEntity.getTableName());
         lbTitle.setText("TABLE - " + tableEntity.getTableName());
-
+        
+        
+        cashToggleButton.addEventToggleSelected(new ToggleAdapter() {
+            @Override
+            public void onSelected(boolean selected) {
+                
+                if (creditcardToggleButton.isSelected()) {
+                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.BOTTOM_LEFT, "You can only select one payment type.");
+                }
+            }
+        });
+        creditcardToggleButton.addEventToggleSelected(new ToggleAdapter() {
+            @Override
+            public void onSelected(boolean selected) {
+                
+                if (cashToggleButton.isSelected()) {
+                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.BOTTOM_LEFT, "You can only select one payment type.");
+                }
+            }
+        });
+        
+        
+        
+        
     }
     
     private void init() {
+        
+        
+        cmdConfirm.putClientProperty("JComponent.roundRect", true);
+
+        cmdCancel.putClientProperty("JComponent.roundRect", true);
+
+        
         
         
         panel.putClientProperty(FlatClientProperties.STYLE, ""
@@ -130,7 +165,15 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
             int amount = (int) getSelectedValue(model, i, 6);
             total += price * amount;
         }
-        lbTotal.setText(String.valueOf(total) + " $");
+        lbTotal.setText(String.valueOf(total) + "$");
+    }
+    
+    
+    private double getTotal() {
+        String tempString = lbTotal.getText();
+        tempString = tempString.replaceAll("\\$", "");
+        System.out.println("debug-> " + tempString);
+        return Double.valueOf(tempString);
     }
 
 
@@ -151,10 +194,17 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
         lbTitle = new javax.swing.JLabel();
         cmdAdd = new com.ras.swing.button.ButtonAction();
         cmdDelete = new com.ras.swing.button.ButtonAction();
-        borderUp = new javax.swing.JLabel();
-        lbTotal = new javax.swing.JLabel();
-        lbTotalSign = new javax.swing.JLabel();
         cmdEdit = new com.ras.swing.button.ButtonAction();
+        lbTotalSign = new javax.swing.JLabel();
+        lbTotal = new javax.swing.JLabel();
+        lbTotalSign2 = new javax.swing.JLabel();
+        cashToggleButton = new com.ras.swing.button.toggle.ToggleButton();
+        lbTotalSign1 = new javax.swing.JLabel();
+        creditcardToggleButton = new com.ras.swing.button.toggle.ToggleButton();
+        cashToggleButton1 = new com.ras.swing.button.toggle.ToggleButton();
+        cashToggleButton2 = new com.ras.swing.button.toggle.ToggleButton();
+        cmdConfirm = new javax.swing.JButton();
+        cmdCancel = new javax.swing.JButton();
         menuSubTitle = new javax.swing.JLabel();
 
         jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 36)); // NOI18N
@@ -207,18 +257,49 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
             }
         });
 
-        borderUp.setBorder(javax.swing.BorderFactory.createMatteBorder(3, 0, 0, 0, new java.awt.Color(30, 30, 30)));
-
-        lbTotal.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
-        lbTotal.setText("0");
-
-        lbTotalSign.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
-        lbTotalSign.setText("Total =");
-
         cmdEdit.setText("Edit");
         cmdEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmdEditActionPerformed(evt);
+            }
+        });
+
+        lbTotalSign.setFont(new java.awt.Font("Helvetica Neue", 1, 48)); // NOI18N
+        lbTotalSign.setText("Total =");
+
+        lbTotal.setFont(new java.awt.Font("Helvetica Neue", 1, 48)); // NOI18N
+        lbTotal.setText("0");
+
+        lbTotalSign2.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
+        lbTotalSign2.setText("Cash");
+
+        cashToggleButton.setForeground(new java.awt.Color(50, 205, 50));
+
+        lbTotalSign1.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
+        lbTotalSign1.setText("Credit Card");
+
+        creditcardToggleButton.setForeground(new java.awt.Color(31, 31, 31));
+
+        cashToggleButton1.setForeground(new java.awt.Color(31, 31, 31));
+
+        cashToggleButton2.setForeground(new java.awt.Color(50, 205, 50));
+        cashToggleButton1.add(cashToggleButton2);
+
+        creditcardToggleButton.add(cashToggleButton1);
+
+        cmdConfirm.setBackground(new java.awt.Color(50, 205, 50));
+        cmdConfirm.setText("Confirm");
+        cmdConfirm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdConfirmActionPerformed(evt);
+            }
+        });
+
+        cmdCancel.setBackground(new java.awt.Color(255, 51, 51));
+        cmdCancel.setText("Cancel");
+        cmdCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdCancelActionPerformed(evt);
             }
         });
 
@@ -227,12 +308,9 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
         panelLayout.setHorizontalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelLayout.createSequentialGroup()
+                .addGap(50, 50, 50)
                 .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(borderUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(panelLayout.createSequentialGroup()
-                        .addGap(100, 100, 100)
                         .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panelLayout.createSequentialGroup()
                                 .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -241,51 +319,67 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
                                 .addGap(18, 18, 18)
                                 .addComponent(cmdEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE))
+                                .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lbTitle))
+                        .addContainerGap(79, Short.MAX_VALUE))
+                    .addGroup(panelLayout.createSequentialGroup()
+                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 869, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(panelLayout.createSequentialGroup()
-                                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(scroll, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 869, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbTitle, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addContainerGap())
-            .addGroup(panelLayout.createSequentialGroup()
-                .addGap(105, 105, 105)
-                .addComponent(lbTotal)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panelLayout.createSequentialGroup()
-                    .addGap(16, 16, 16)
-                    .addComponent(lbTotalSign)
-                    .addContainerGap(983, Short.MAX_VALUE)))
+                                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
+                                        .addComponent(lbTotalSign2)
+                                        .addGap(30, 30, 30)
+                                        .addComponent(cashToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(35, 35, 35))
+                                    .addGroup(panelLayout.createSequentialGroup()
+                                        .addComponent(lbTotalSign)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(lbTotal)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(panelLayout.createSequentialGroup()
+                                        .addComponent(lbTotalSign1)
+                                        .addGap(30, 30, 30)
+                                        .addComponent(creditcardToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(panelLayout.createSequentialGroup()
+                                        .addComponent(cmdConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(cmdCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelLayout.createSequentialGroup()
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(cashToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panelLayout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(lbTitle)
+                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panelLayout.createSequentialGroup()
+                                .addGap(30, 30, 30)
+                                .addComponent(lbTitle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cmdEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cmdAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cmdEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cmdAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(borderUp)
-                .addGap(29, 29, 29)
-                .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
-            .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
-                    .addContainerGap(537, Short.MAX_VALUE)
+                        .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbTotalSign2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbTotalSign1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(creditcardToggleButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmdConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmdCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbTotalSign, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(32, 32, 32)))
+                    .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26))
         );
 
         menuSubTitle.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
@@ -297,31 +391,25 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 971, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(menuSubTitle)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 971, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(91, Short.MAX_VALUE)
+                .addContainerGap(154, Short.MAX_VALUE)
                 .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(100, 100, 100))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(36, 36, 36)
-                    .addComponent(menuSubTitle)
-                    .addContainerGap(1158, Short.MAX_VALUE)))
+                .addGap(146, 146, 146))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(80, 80, 80)
+                .addGap(18, 18, 18)
+                .addComponent(menuSubTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(71, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(98, 98, 98)
-                    .addComponent(menuSubTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(692, Short.MAX_VALUE)))
+                .addGap(85, 85, 85))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -401,6 +489,103 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
 
     }//GEN-LAST:event_cmdEditActionPerformed
 
+    private void cmdCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCancelActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmdCancelActionPerformed
+
+    private void cmdConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdConfirmActionPerformed
+
+        if (creditcardToggleButton.isSelected() && cashToggleButton.isSelected()) {
+            MessageAlerts.getInstance().showMessage("ERROR", "Please select only one payment type.", MessageAlerts.MessageType.ERROR); 
+            return;
+        }
+        if (!creditcardToggleButton.isSelected() && !cashToggleButton.isSelected()) {
+            MessageAlerts.getInstance().showMessage("ERROR", "Please select a payment type.", MessageAlerts.MessageType.ERROR); 
+        }
+        else {
+                DatabaseOperation databaseOperation = new DatabaseOperation();
+
+                Bill bill = new Bill(databaseOperation.increaseID("bill"), tableEntity.getTableID(), getTotal(), getPaymentType(), Instant.now());
+
+                databaseOperation.addBillToDatabase(bill);
+
+                ArrayList<Product> productList = databaseOperation.getProductListFromTable(tableEntity);
+
+                for(Product p : productList) {
+                    int productAmount = databaseOperation.getProductAmountFromTable(p, tableEntity);
+                    System.out.println(p.getProductCategory());
+                    databaseOperation.addProductToBill(p, bill, productAmount);
+                }
+
+
+                deleteAllDatas();
+                
+                MessageAlerts.getInstance().showMessage("SUCCESS", "Bill successfully created.", MessageAlerts.MessageType.SUCCESS); 
+
+
+        
+        }
+    }//GEN-LAST:event_cmdConfirmActionPerformed
+
+    
+    private void dodo() {
+            SwingWorker<Void, Void> worker;
+            worker = new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    DatabaseOperation databaseOperation = new DatabaseOperation();
+
+                    System.out.println(getTotal() + " " + getPaymentType());
+                    Bill bill = new Bill(databaseOperation.increaseID("bill"), tableEntity.getTableID(), getTotal(), getPaymentType(), Instant.now());
+                                        
+                    databaseOperation.addBillToDatabase(bill);
+                    
+                    ArrayList<Product> productList = databaseOperation.getProductListFromTable(tableEntity);
+                    
+                    for(Product p : productList) {
+                        int productAmount = databaseOperation.getProductAmountFromTable(p, tableEntity);
+                        System.out.println(p.getProductCategory());
+                        databaseOperation.addProductToBill(p, bill, productAmount);
+                    }
+                    
+                    
+                    deleteAllDatas();
+
+
+                    
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                MessageAlerts.getInstance().showMessage("SUCCESS", "Bill successfully created.", MessageAlerts.MessageType.SUCCESS); 
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.BOTTOM_LEFT, "404 - Error");
+                    }
+                }
+            };
+
+            worker.execute();
+            
+        }
+        
+        
+        
+    
+    
+    
+    private PaymentType getPaymentType() {
+        if (creditcardToggleButton.isSelected() && !cashToggleButton.isSelected()) {
+            return PaymentType.CREDIT_CARD;
+        }
+        if (cashToggleButton.isSelected() && !creditcardToggleButton.isSelected()) {
+            return PaymentType.CASH;
+        }
+        return null;
+    }
     
     private void cmdEditAction() {
         
@@ -509,14 +694,21 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
 
     private DefaultTableModel model;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel borderUp;
+    private com.ras.swing.button.toggle.ToggleButton cashToggleButton;
+    private com.ras.swing.button.toggle.ToggleButton cashToggleButton1;
+    private com.ras.swing.button.toggle.ToggleButton cashToggleButton2;
     private com.ras.swing.button.ButtonAction cmdAdd;
+    private javax.swing.JButton cmdCancel;
+    private javax.swing.JButton cmdConfirm;
     private com.ras.swing.button.ButtonAction cmdDelete;
     private com.ras.swing.button.ButtonAction cmdEdit;
+    private com.ras.swing.button.toggle.ToggleButton creditcardToggleButton;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel lbTitle;
     private javax.swing.JLabel lbTotal;
     private javax.swing.JLabel lbTotalSign;
+    private javax.swing.JLabel lbTotalSign1;
+    private javax.swing.JLabel lbTotalSign2;
     private javax.swing.JLabel menuSubTitle;
     private javax.swing.JPanel panel;
     private javax.swing.JScrollPane scroll;
@@ -641,9 +833,69 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    
+    private void deleteAllDatas() {
         
+        try {                                    
+            SwingWorker<Void, Void> worker;
+            worker = new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    ArrayList<Boolean> selectedValueList = getSelectedBooleanValues(model);
+                    DatabaseOperation databaseOperation = new DatabaseOperation();
+                    int i = 0;
+                    for(Boolean b : selectedValueList) {
+                        i++;
+                            
+                        String productName = (String) getSelectedValue(model, i-1, 2);
+                        String productDescription = (String) getSelectedValue(model, i-1, 3);
+                        Category productCategory = (Category) getSelectedValue(model, i-1, 4);
+
+                        double price = (double) getSelectedValue(model, i-1, 5);
+                        int amount = (int) getSelectedValue(model, i-1, 6);
+                        int productID = databaseOperation.getProductIDFromAllFeatures(productName, productDescription, price, productCategory.categoryID());
+
+
+                        Product product = new Product(productName, productDescription, price, productCategory, productID);
+
+                        databaseOperation.deleteProductFromTable(product, tableEntity);
+                    }
+                    resetData(model);
+                    
+                    insertData("update");
+                    
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                        updateTotalLabel();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.BOTTOM_LEFT, "404 - Error");
+                    }
+                }
+            };
+
+
+            worker.execute();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
     }
+    
+    
+    
+    
+    
+    
 
 
     public boolean isSelectedValueContainsTrue() {
