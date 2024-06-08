@@ -13,7 +13,7 @@ import raven.toast.Notifications;
 public class Main extends javax.swing.JFrame {
 
     public static Main main;
-    private Login loginForm;
+    private RAS loginForm;
 
     /**
      * Creates new form Main
@@ -47,8 +47,8 @@ public class Main extends javax.swing.JFrame {
 
     public void login() {
         if (loginForm == null) {
-          //  loginForm = new Login();
-          loginForm = new Login();
+          //  loginForm = new RAS();
+          loginForm = new RAS();
 
         }
         WindowsTabbed.getInstance().showTabbed(false);

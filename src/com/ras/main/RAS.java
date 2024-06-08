@@ -35,13 +35,13 @@ import javax.swing.UnsupportedLookAndFeelException;
 import raven.alerts.MessageAlerts;
 import raven.toast.Notifications;
 
-public class Login extends javax.swing.JFrame {
+public class RAS extends javax.swing.JFrame {
     
 
     /**
      * Creates new form Login
      */
-    public Login() {
+    public RAS() {
         initComponents();
         this.setLocationRelativeTo(null);
         Notifications.getInstance().setJFrame(this);
@@ -291,7 +291,7 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel7MouseClicked
 
     private void jLabel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseClicked
-        this.setState(Login.ICONIFIED);
+        this.setState(RAS.ICONIFIED);
     }//GEN-LAST:event_jLabel8MouseClicked
 
     private void kButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kButton1ActionPerformed
@@ -387,7 +387,7 @@ public class Login extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Login().setVisible(true);
+                new RAS().setVisible(true);
             }
         });
         
