@@ -17,9 +17,11 @@ It is an automation system programmed with the java language that meets the requ
 
 ![image](https://github.com/Pocanistaken/RAS/assets/51020037/02098261-fcd8-4518-86e5-c4e2bb6a6615)
 
-![image](https://github.com/Pocanistaken/RAS/assets/51020037/425859ba-ad67-4535-83ec-5e970cf45809)
+![image](https://github.com/Pocanistaken/RAS/assets/51020037/4e37fa8f-7e89-42c8-b874-ec0d02038224)
 
 ![image](https://github.com/Pocanistaken/RAS/assets/51020037/7fc0c469-723f-475b-aae1-070e81e85ee3)
+
+![image](https://github.com/Pocanistaken/RAS/assets/51020037/bef14048-2ed9-4642-8b3a-147d1e28c015)
 
 ![image](https://github.com/Pocanistaken/RAS/assets/51020037/103650c8-f261-4ac3-93e2-5030c61cf8af)
 
