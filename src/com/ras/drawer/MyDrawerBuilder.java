@@ -142,7 +142,7 @@ public class MyDrawerBuilder extends SimpleDrawerBuilder {
                             
                             if (subIndex == 1) {
                                 
-                                 WindowsTabbed.getInstance().addTab("Product Edit", new BillForm());
+                                 WindowsTabbed.getInstance().addTab("Bill View", new BillForm());
 
                                 
                             }
