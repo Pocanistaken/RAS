@@ -211,16 +211,6 @@ public class BillForm extends TabbedForm implements IEntityForm {
 
     }//GEN-LAST:event_cmdNewActionPerformed
 
-    @Override
-    public boolean formClose() {
-        int opt = JOptionPane.showConfirmDialog(this, "Data not save do you want to close ?", "Close", JOptionPane.YES_NO_OPTION);
-        return opt == JOptionPane.YES_OPTION;
-    }
-
-    @Override
-    public void formOpen() {
-        System.out.println("Form open");
-    }
 
     private DefaultTableModel model;
     // Variables declaration - do not modify//GEN-BEGIN:variables

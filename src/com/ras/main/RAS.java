@@ -6,33 +6,20 @@ import com.ras.image.IconManager;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
-import com.formdev.flatlaf.ui.FlatPasswordFieldUI;
 import com.ras.database.DatabaseOperation;
-import com.ras.entity.Region;
 import com.ras.entity.account.Employee;
 import com.ras.form.DashboardForm;
-import static com.ras.main.Main.main;
 import com.ras.manager.FileManager;
 import com.ras.tabbed.WindowsTabbed;
 import java.awt.Font;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.geom.RoundRectangle2D;
-import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import raven.alerts.MessageAlerts;
 import raven.toast.Notifications;
 
 public class RAS extends javax.swing.JFrame {
@@ -64,8 +51,18 @@ public class RAS extends javax.swing.JFrame {
         txtpassword.putClientProperty(FlatClientProperties.STYLE, "showRevealButton:true;"+"showCapsLock:true");
         
         
-        txtusername.setText("admin");
-        txtpassword.setText("admin");
+        /* You can create accounts from database
+        /
+        / Default administrator account information
+        / username -> admin
+        / password -> admin
+        
+        
+        */
+        
+        
+        //txtusername.setText("admin");
+        //txtpassword.setText("admin");
     }
     
     
@@ -391,13 +388,42 @@ public class RAS extends javax.swing.JFrame {
             }
         });
         
-        FileManager.getInstance().createApplicationFolderPath();
-
-                
-
-        
-        
+        setup();
+          
     }    
+    
+    
+    private static void setup() {
+        SwingWorker<Void, Void> worker;
+        worker = new SwingWorker<Void, Void>() {
+
+            @Override
+            protected Void doInBackground() throws Exception {
+                
+                DatabaseOperation databaseOperation = new DatabaseOperation();
+                databaseOperation.createTables();
+                FileManager.getInstance().createApplicationFolderPath();
+
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                
+                try {
+                    
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.BOTTOM_LEFT, "404 - Error");
+                }
+            }
+        };
+        
+        worker.execute();
+        
+   
+    }
     
     private int xx,xy;
     private static String username,password;

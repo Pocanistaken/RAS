@@ -33,14 +33,10 @@ import raven.popup.component.PopupCallbackAction;
 import raven.popup.component.PopupController;
 import raven.toast.Notifications;
 
-/**
- *
- * @author aligullu
- */
+
 public class AccountForm extends TabbedForm {
     
     private DatePicker datePicker;
-    
 
     /**
      * Creates new form AccountForm
@@ -50,12 +46,15 @@ public class AccountForm extends TabbedForm {
         datePicker = new DatePicker();
         datePicker.setEditor(birthDateFormattedTextField);
 
-        String[] dateArray = Employee.getInstance().getBirthDate().split("/");
-        LocalDate localDate = LocalDate.of(Integer.valueOf(dateArray[2]), Integer.valueOf(dateArray[1]), Integer.valueOf(dateArray[0]));
+        
+        if (Employee.getInstance().getBirthDate() != null) { // Fix the errors in the first install.
+            String[] dateArray = Employee.getInstance().getBirthDate().split("/");
+            LocalDate localDate = LocalDate.of(Integer.valueOf(dateArray[2]), Integer.valueOf(dateArray[1]), Integer.valueOf(dateArray[0]));
+            datePicker.setSelectedDate(localDate);
+        }
         
         firstNameTextField1.setText(Employee.getInstance().getName());
         lastNameTextField.setText(Employee.getInstance().getSurname());
-        datePicker.setSelectedDate(localDate);
         phoneNumberTextField.setText(Employee.getInstance().getPhoneNumber());
         positionTextField.setText(Employee.getInstance().getRole());
         positionTextField.setEditable(false);
@@ -320,16 +319,7 @@ public class AccountForm extends TabbedForm {
         // TODO add your handling code here:
     }//GEN-LAST:event_birthDateFormattedTextFieldActionPerformed
 
-    @Override
-    public boolean formClose() {
-        int opt = JOptionPane.showConfirmDialog(this, "Data not save do you want to close ?", "Close", JOptionPane.YES_NO_OPTION);
-        return opt == JOptionPane.YES_OPTION;
-    }
 
-    @Override
-    public void formOpen() {
-        System.out.println("Form open");
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField birthDateFormattedTextField;

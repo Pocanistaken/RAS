@@ -41,15 +41,15 @@ public class MyDrawerBuilder extends SimpleDrawerBuilder {
             {"Dashboard"},
             {"~RESTAURANT MANAGMENT~"},
             {"Table", "View", "Edit"},
-            {"Menu", "View", "Edit"},
-            {"Region", "View", "Edit"},
-            {"Category", "View", "Edit"},
-            {"Product", "View", "Edit"},
-            {"Bill", "View", "Edit"},
+            {"Menu", "Edit"},
+            {"Region", "Edit"},
+            {"Category", "Edit"},
+            {"Product", "Edit"},
+            {"Bill", "View"},
             {"~REPORTS~"},
             {"Statistic", "View", "Suggestions"},
             {"~OTHER~"},
-            {"Profile", "View", "Edit"},
+            {"Profile", "View"},
             {"Logout"}};
 
         String icons[] = {

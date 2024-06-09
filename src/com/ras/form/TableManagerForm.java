@@ -187,16 +187,6 @@ public class TableManagerForm extends TabbedForm {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    @Override
-    public boolean formClose() {
-        int opt = JOptionPane.showConfirmDialog(this, "Data not save do you want to close ?", "Close", JOptionPane.YES_NO_OPTION);
-        return opt == JOptionPane.YES_OPTION;
-    }
-
-    @Override
-    public void formOpen() {
-        System.out.println("Form open");
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel2;

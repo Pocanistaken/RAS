@@ -4,7 +4,6 @@ import com.ras.entity.Bill;
 import com.ras.entity.Category;
 import com.ras.entity.Menu;
 import com.ras.entity.Product;
-import com.ras.entity.ProductTable;
 import com.ras.entity.Region;
 import com.ras.entity.Table;
 import com.ras.entity.model.DailyEarnModelData;
@@ -18,23 +17,20 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.sql.*;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import raven.toast.Notifications;
 
 public class DatabaseOperation {
 
-    private final String databaseHostIP = "193.106.196.116";
-    private final String databaseName = "yetk_aliabiveritabani";
-    private final String databaseUsername = "yetk_aliabiveritabani";
-    private final String databasePassword = "*0e!tkFkmFkH0udG";
+    private final String databaseHostIP = "localhost";
+    private final String databaseName = "RAS";
+    private final String databaseUsername = "root";
+    private final String databasePassword = "";
     private final String databasePort = "3306";
 
 
@@ -54,6 +50,121 @@ public class DatabaseOperation {
             Logger.getLogger(DatabaseOperation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public void createTables() {
+        
+        String[] tableNames = {
+            "user", "table_product", "table", "region", "product",
+            "menu_product", "menu", "category", "bill_product", "bill"
+        };
+
+        String[] sqlQueries = {
+            "CREATE TABLE `user` (" +
+            "`username` text DEFAULT NULL," +
+            "`password` text DEFAULT NULL," +
+            "`role` text DEFAULT NULL," +
+            "`name` text DEFAULT NULL," +
+            "`surname` text DEFAULT NULL," +
+            "`birthDate` text DEFAULT NULL," +
+            "`phoneNumber` text DEFAULT NULL," +
+            "`avatar` longblob DEFAULT NULL" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;",
+
+            "CREATE TABLE `table_product` (" +
+            "`table_product_id` int(11) DEFAULT NULL," +
+            "`table_id` int(11) DEFAULT NULL," +
+            "`product_id` int(11) DEFAULT NULL," +
+            "`amount` int(11) DEFAULT NULL" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;",
+
+            "CREATE TABLE `table` (" +
+            "`table_id` int(11) DEFAULT NULL," +
+            "`tableName` text DEFAULT NULL," +
+            "`tableChairAmount` int(11) DEFAULT NULL," +
+            "`tableOwnerPhoneNumber` text DEFAULT NULL," +
+            "`tableStatus` text DEFAULT NULL," +
+            "`region_id` int(11) DEFAULT NULL" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;",
+
+            "CREATE TABLE `region` (" +
+            "`region_id` int(11) DEFAULT NULL," +
+            "`regionName` text DEFAULT NULL" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;",
+
+            "CREATE TABLE `product` (" +
+            "`product_id` int(11) DEFAULT NULL," +
+            "`productName` text DEFAULT NULL," +
+            "`productDescription` text DEFAULT NULL," +
+            "`productPrice` double DEFAULT NULL," +
+            "`category_id` int(11) DEFAULT NULL" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;",
+
+            "CREATE TABLE `menu_product` (" +
+            "`menu_id` int(11) DEFAULT NULL," +
+            "`product_id` int(11) DEFAULT NULL" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;",
+
+            "CREATE TABLE `menu` (" +
+            "`menu_id` int(11) DEFAULT NULL," +
+            "`menuName` text DEFAULT NULL" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;",
+
+            "CREATE TABLE `category` (" +
+            "`category_id` int(11) DEFAULT NULL," +
+            "`categoryName` text DEFAULT NULL" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;",
+
+            "CREATE TABLE `bill_product` (" +
+            "`bill_id` int(11) DEFAULT NULL," +
+            "`product_id` int(11) DEFAULT NULL," +
+            "`amount` int(11) DEFAULT NULL" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;",
+
+            "CREATE TABLE `bill` (" +
+            "`bill_id` int(11) DEFAULT NULL," +
+            "`billTableID` text DEFAULT NULL," +
+            "`billTotal` double DEFAULT NULL," +
+            "`billPaymentType` text DEFAULT NULL," +
+            "`billDate` text DEFAULT NULL" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;"
+        };
+        
+        String adminUserQuery = "INSERT INTO `user` (`username`, `password`, `role`, `name`, `surname`, `birthDate`, `phoneNumber`) VALUES " +
+                        "('admin', 'admin', 'Administrator', 'Admin', 'Admin', '01/01/1900', '+90 555 444 33 22')";
+        
+        try (final var statement = con.createStatement()){
+            
+            for (int i = 0; i < tableNames.length; i++) {
+                String tableName = tableNames[i];
+                String checkTableExistsQuery = "SHOW TABLES LIKE '" + tableName + "';";
+                ResultSet resultSet = statement.executeQuery(checkTableExistsQuery);
+
+                if (!resultSet.next()) {
+                    statement.executeUpdate(sqlQueries[i]);
+                }
+
+                resultSet.close();
+            }
+            
+            
+            String checkAdminUserQuery = "SELECT * FROM `user` WHERE `username`='admin'";
+
+            ResultSet adminUserResultSet = statement.executeQuery(checkAdminUserQuery);
+
+            if (!adminUserResultSet.next()) {
+                statement.executeUpdate(adminUserQuery);
+            } 
+
+            adminUserResultSet.close();
+
+            statement.close();
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }        
+    }
+    
+    
     
     public boolean loginPanel(String username, String password) {
         final var request = "Select * from user where username = ? and password = ?";
@@ -100,6 +211,10 @@ public class DatabaseOperation {
 
             if (rs.next()) {
                 Blob blob = rs.getBlob("avatar");
+                if (blob == null) { // Fix the errors in the first install.
+                    return new File("./src/com/ras/image/avatar.png");
+                }
+
                 byte[] b = blob.getBytes(1, (int) blob.length());
 
                 file = new File(FileManager.getInstance().getApplicationFolderPath().toString(), "avatar.png");
@@ -134,9 +249,8 @@ public class DatabaseOperation {
     
     public void updateEmployeeInfo(String username, String key, String value) {
         final var request = "UPDATE user SET " + key + " = ? WHERE username = ?";
-        System.out.println("SQL Query: " + request);
         try {
-            con.setAutoCommit(true); // Auto-commit modunu aç
+            con.setAutoCommit(true);
             try (final var statement = con.prepareStatement(request)) {
                 if (key.equals("avatar")) {
                     File imgFile = new File(value);
@@ -145,7 +259,6 @@ public class DatabaseOperation {
                         statement.setBinaryStream(1, in, (int) imgFile.length());
                         statement.setString(2, username);
                         int rowsUpdated = statement.executeUpdate();
-                        System.out.println("Avatar updated, rows affected: " + rowsUpdated);
                     } else {
                         System.out.println("File not found or is a directory: " + value);
                     }
@@ -153,7 +266,6 @@ public class DatabaseOperation {
                     statement.setString(1, value);
                     statement.setString(2, username);
                     int rowsUpdated = statement.executeUpdate();
-                    System.out.println("Info updated, rows affected: " + rowsUpdated);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

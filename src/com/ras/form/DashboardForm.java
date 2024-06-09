@@ -55,12 +55,12 @@ public class DashboardForm extends TabbedForm {
                 chart.start();
                 
                 
-                int todayEarn = (int) list.get(list.size() - 1).getDailyTotal();
+                int todayEarn = (int) list.get(0).getDailyTotal();
                 int dailyCustomer = databaseOperation.getTodayInvoiceCount();
                 int instantTableCount = databaseOperation.getTotalInstantTableCount();
                 
                 
-                todayEarnLb.setText(String.valueOf(list.get(list.size() - 1).getDailyTotal()) + "$");
+                todayEarnLb.setText(String.valueOf(list.get(0).getDailyTotal()) + "$");
                 dailyCustomerLb.setText(String.valueOf(dailyCustomer));
                 instantTableCountLb.setText(String.valueOf(instantTableCount));
 

@@ -317,16 +317,7 @@ public class MenuProductForm extends TabbedForm implements IEntityForm {
             cmdDeleteAction(model, this.getClass());
     }//GEN-LAST:event_cmdDeleteActionPerformed
 
-    @Override
-    public boolean formClose() {
-        int opt = JOptionPane.showConfirmDialog(this, "Data not save do you want to close ?", "Close", JOptionPane.YES_NO_OPTION);
-        return opt == JOptionPane.YES_OPTION;
-    }
 
-    @Override
-    public void formOpen() {
-        System.out.println("Form open");
-    }
 
     private DefaultTableModel model;
     // Variables declaration - do not modify//GEN-BEGIN:variables
