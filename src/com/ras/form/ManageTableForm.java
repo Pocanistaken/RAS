@@ -278,14 +278,16 @@ public class ManageTableForm extends TabbedForm implements IEntityForm {
         lbTotalSign1.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
         lbTotalSign1.setText("Credit Card");
 
-        creditcardToggleButton.setForeground(new java.awt.Color(31, 31, 31));
+        creditcardToggleButton.setForeground(new java.awt.Color(50, 205, 50));
 
-        cashToggleButton1.setForeground(new java.awt.Color(31, 31, 31));
+        cashToggleButton1.setForeground(new java.awt.Color(50, 205, 50));
 
         cashToggleButton2.setForeground(new java.awt.Color(50, 205, 50));
         cashToggleButton1.add(cashToggleButton2);
+        cashToggleButton2.setBounds(0, 0, 60, 35);
 
         creditcardToggleButton.add(cashToggleButton1);
+        cashToggleButton1.setBounds(0, 0, 60, 35);
 
         cmdConfirm.setBackground(new java.awt.Color(50, 205, 50));
         cmdConfirm.setText("Confirm");

@@ -316,7 +316,7 @@
         <Container class="com.ras.swing.button.toggle.ToggleButton" name="creditcardToggleButton">
           <Properties>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="1f" green="1f" red="1f" type="rgb"/>
+              <Color blue="32" green="cd" red="32" type="rgb"/>
             </Property>
           </Properties>
 
@@ -327,7 +327,7 @@
             <Container class="com.ras.swing.button.toggle.ToggleButton" name="cashToggleButton1">
               <Properties>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="1f" green="1f" red="1f" type="rgb"/>
+                  <Color blue="32" green="cd" red="32" type="rgb"/>
                 </Property>
               </Properties>
               <Constraints>
